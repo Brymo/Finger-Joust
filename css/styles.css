@@ -31,7 +31,7 @@ main_container{
     height: 100%;
     display: grid;
     font-size: 10em;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 0.1em 1fr;
     grid-template-rows: 1fr;
 
 }
@@ -44,15 +44,21 @@ playerA{
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    border-right-style: dotted;
-    border-color: green;
 
 }
 
-playerB{
-
+aesthetic{
     grid-row: 1/span 1;
     grid-column: 2/span 1;
+    font-size: 0.15em;
+    color: green;
+    display: flex;
+    align-items: center;
+}
+
+playerB{
+    grid-row: 1/span 1;
+    grid-column: 3/span 1;
     display:flex;
     justify-content: center;
     align-items: center;
