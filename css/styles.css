@@ -56,7 +56,7 @@ aesthetic{
     align-items: center;
 }
 
-playerB{
+playerL{
     grid-row: 1/span 1;
     grid-column: 3/span 1;
     display:flex;

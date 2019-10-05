@@ -1,87 +1,51 @@
 const playerA = document.getElementById("P1");
-let targetA = randomChar();
-playerA.innerHTML = targetA;
-let scoreA = 0;
+const playerL = document.getElementById("P2");
+const goalbarA = document.getElementById("ga");
+const goalbarL = document.getElementById("gl");
+const displays = {a: playerA, l:playerL};
+const listenerA = document.addEventListener('keyup', listener(goalbarA,"a","./bellA.wav"));
+const listenerL = document.addEventListener('keyup', listener(goalbarL,"l","./bellL.wav"));
 
-const playerB = document.getElementById("P2");
-let targetB = randomChar();
-playerB.innerHTML = targetB;
-let scoreB = 0;
+let finished = false;
+function listener(goal,displayKey,noise){
+    let score = 0;
+    displays[displayKey].innerHTML = displayKey;
 
-document.onkeypress = function (e) {
-    const evnt = e || window.event;
-    const key = event.key || event.keyCode;
-    const goalbarA = document.getElementById("ga");
-    const goalbarB = document.getElementById("gb");
+    return ()=>{
+        const key = event.key || event.keyCode;
+        
+        if(key === displays[displayKey].innerHTML  && !finished){
+            new Audio(noise).play();
 
-    if(key === targetA){
-        scoreA++;
-        targetA = randomChar();
-        playerA.innerHTML = targetA;
-        targetB = randomCharButNot(targetA);
-        playerB.innerHTML = targetB;
-        goalbarA.style.width = scoreA * 10 + "%";
-        var audio = new Audio('./bellA.wav');
-        audio.play();
+            score++;
+            goal.style.width = score * 10 + "%";
+            if(score == 10){
+                displays[displayKey].innerHTML = "Winner";
+                finished = true;
+                return;
+            }
+            
+            const usedChars = [];
+            Object.keys(displays).forEach((key)=>{
+                const randomChar = randomCharButNot(usedChars);
+                usedChars.push(randomChar);
+                setTimeout(()=>{displays[key].innerHTML = randomChar},0);
+            });
+        }
     }
-
-    if(key === targetB){
-        scoreB++;
-        targetA = randomChar();
-        playerA.innerHTML = targetA;
-        targetB = randomCharButNot(targetA);
-        playerB.innerHTML = targetB;
-        goalbarB.style.width = scoreB * 10 + "%";
-        var audio = new Audio('./bellB.wav');
-        audio.play();
-    }
-
-    if(scoreA == 10){
-        setTimeout(() => {
-            playerA.innerHTML = "Winner";
-        }, 0);
-
-        document.onkeypress = null;
-
-    }
-
-    if(scoreB == 10){
-        setTimeout(() => {
-            playerB.innerHTML = "Winner";
-        }, 0);
-
-        document.onkeypress = null;
-    }
-
-    
-    
-};
-
-function randomChar(){
-
-    const getRandomInt = (max)=>{
-        return Math.floor(Math.random() * Math.floor(max));
-    }
-
-    return String.fromCharCode(97 + getRandomInt(25));
-
 }
 
-function randomCharButNot(thisOne){
-
+function randomCharButNot(theseOnes){
     const getRandomInt = (max)=>{
         return Math.floor(Math.random() * Math.floor(max));
     }
-
     
     let char = String.fromCharCode(97 + getRandomInt(25));
-
-    while(char === thisOne){
+    while(theseOnes.includes(char)){
         char = String.fromCharCode(97 + getRandomInt(25));
     }
 
     return char;
-
 }
 
 
