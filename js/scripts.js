@@ -6,14 +6,11 @@ const displays = {a: playerA, b:playerB};
 const startButton = document.getElementById("init");
 
 startButton.addEventListener("click",()=>{
-
-    let count = 3;
     startButton.innerHTML = 3;
 
+    let count = 3;
     const countdown = setInterval(()=>{
-
         count--;
-
         if(count === 0){
             startButton.style.visibility = "hidden";
             clearInterval(countdown);
@@ -25,7 +22,6 @@ startButton.addEventListener("click",()=>{
     },1000);
 
 });
-
 
 let finished = false;
 function listener(goal,displayKey,noise){
