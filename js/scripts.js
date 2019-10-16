@@ -2,10 +2,11 @@ const playerA = document.getElementById("P1");
 const playerB = document.getElementById("P2");
 const goalbarA = document.getElementById("ga");
 const goalbarB = document.getElementById("gb");
-const displays = {a: playerA, b:playerB};
 const startButton = document.getElementById("init");
 
 startButton.addEventListener("click",()=>{
+    [playerA, playerB].forEach(player => player.usedChars = []);
+
     startButton.innerHTML = 3;
 
     let count = 3;
@@ -14,8 +15,8 @@ startButton.addEventListener("click",()=>{
         if(count === 0){
             startButton.style.visibility = "hidden";
             clearInterval(countdown);
-            document.addEventListener('keyup', listener(goalbarA,"a","./bellA.wav"));
-            document.addEventListener('keyup', listener(goalbarB,"b","./bellB.wav"));
+            document.addEventListener('keyup', listener(goalbarA,playerA,"./bellA.wav"));
+            document.addEventListener('keyup', listener(goalbarB,playerB,"./bellB.wav"));
         }else{
             startButton.innerHTML = count;
         }
@@ -24,29 +25,28 @@ startButton.addEventListener("click",()=>{
 });
 
 let finished = false;
-function listener(goal,displayKey,noise){
+function listener(goal,elem,noise){
     let score = 0;
-    displays[displayKey].innerHTML = randomCharButNot()
+    elem.innerHTML = randomCharButNot()
 
     return (evt)=>{
         const key = event.key.toLowerCase() || event.keyCode;
         
-        if(key === displays[displayKey].innerHTML && !finished){
+        if(key === elem.innerHTML && !finished){
             new Audio(noise).play();
 
             score++;
             goal.style.width = score * 10 + "%";
             if(score == 10){
-                displays[displayKey].innerHTML = "Winner";
+                elem.innerHTML = "Winner";
                 finished = true;
                 return;
             }
             
-            const usedChars = [];
-            Object.keys(displays).forEach((key)=>{
-                const randomChar = randomCharButNot(...usedChars);
-                usedChars.push(randomChar);
-                setTimeout(()=>{displays[key].innerHTML = randomChar},0);
+            [playerA, playerB].forEach(player => {
+                let randomChar = randomCharButNot(...player.usedChars);
+                player.usedChars.push(randomChar);
+                player.innerHTML = randomChar;
             });
         }
     }
