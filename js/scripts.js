@@ -28,10 +28,10 @@ function listener(goal,displayKey,noise){
     let score = 0;
     displays[displayKey].innerHTML = randomCharButNot()
 
-    return ()=>{
-        const key = event.key || event.keyCode;
+    return (evt)=>{
+        const key = event.key.toLowerCase() || event.keyCode;
         
-        if(key === displays[displayKey].innerHTML  && !finished){
+        if(key === displays[displayKey].innerHTML && !finished){
             new Audio(noise).play();
 
             score++;
