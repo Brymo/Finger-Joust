@@ -53,16 +53,8 @@ function listener(goal,elem,noise){
 }
 
 function randomCharButNot(...theseOnes){
-    const getRandomInt = (max)=>{
-        return Math.floor(Math.random() * Math.floor(max));
-    }
-    
-    let char = String.fromCharCode(97 + getRandomInt(25));
-    while(theseOnes.includes(char)){
-        char = String.fromCharCode(97 + getRandomInt(25));
-    }
-
-    return char;
+    let char = String.fromCharCode(97 + Math.floor(Math.random() * 26));
+    return theseOnes.includes(char) ? randomCharButNot(...theseOnes) : char;
 }
 
 
