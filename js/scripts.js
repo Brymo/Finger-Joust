@@ -1,10 +1,23 @@
-const playerA = document.getElementById('P1')
-const playerB = document.getElementById('P2')
-const goalbarA = document.getElementById('ga')
-const goalbarB = document.getElementById('gb')
+const N_QUESTIONS = 10
+
+const players = {
+  playerA: {
+    goal: document.getElementById('ga'),
+    text: document.getElementById('P1'),
+    score: 0
+  },
+  playerB: {
+    goal: document.getElementById('gb'),
+    text: document.getElementById('P2'),
+    score: 0
+  }
+}
+
 const startButton = document.getElementById('init')
 
-const sounds = new class {
+let finished = true
+
+const Sounds = new class {
   constructor () {
     this._dingA = []
     this._dingB = []
@@ -20,16 +33,35 @@ const sounds = new class {
 
   playA () {
     this._dingA[this._dingACounter].play()
-    this._dingACounter = (this._dingACounter + 1) % 10
+    this._dingACounter = (this._dingACounter + 1) % N_QUESTIONS
   }
 
   playB () {
     this._dingB[this._dingBCounter].play()
-    this._dingBCounter = (this._dingBCounter + 1) % 10
+    this._dingBCounter = (this._dingBCounter + 1) % N_QUESTIONS
   }
 }()
 
+document.body.addEventListener('keyup', evt => {
+  const key = event.key.toLowerCase() || event.keyCode
+  if (key == ' ' && finished) {
+    startButton.click()
+  }
+})
+
+function resetGame () {
+  finished = false
+  for (player of Object.values(players)) {
+    player.goal.style.width = '0%'
+    player.text.innerText = ''
+    player.score = 0
+  }
+}
+
 startButton.addEventListener('click', () => {
+  if (!finished) return
+  startButton.style.visibility = 'visible'
+
   startButton.innerHTML = 3
 
   let count = 3
@@ -37,49 +69,60 @@ startButton.addEventListener('click', () => {
     count--
     if (count === 0) {
       startButton.style.visibility = 'hidden'
+      resetGame()
+
+      randomiseCharacters()
+
       clearInterval(countdown)
-      document.addEventListener(
-        'keyup',
-        createListener(goalbarA, playerA, sounds.playA.bind(sounds))
-      )
-      document.addEventListener(
-        'keyup',
-        createListener(goalbarB, playerB, sounds.playB.bind(sounds))
-      )
     } else {
       startButton.innerHTML = count
     }
   }, 1000)
 })
 
-let finished = false
+function randomiseCharacters () {
+  let chars = Object.values(players).map(player => player.text.innerText)
 
-function createListener (goal, elem, noiseFn) {
-  let score = 0
-  elem.innerText = randomCharButNot()
+  for (player of Object.values(players)) {
+    let char = randomCharButNot(...chars)
+    player.text.innerText = char
+    chars.push(char)
+  }
+}
+
+function createListener (playerID, noiseFn) {
+  let goal = players[playerID].goal
+  let elem = players[playerID].text
 
   return evt => {
+    if (finished) return
     const key = event.key.toLowerCase() || event.keyCode
 
-    if (key === elem.innerHTML && !finished) {
+    if (key === elem.innerText) {
       noiseFn()
 
-      score++
-      goal.style.width = score * 10 + '%'
-      if (score == 10) {
-        elem.innerHTML = 'Winner'
+      players[playerID].score++
+      goal.style.width = players[playerID].score * (100 / N_QUESTIONS) + '%'
+      if (players[playerID].score == N_QUESTIONS) {
+        elem.innerText = 'Winner'
         finished = true
+
         return
       }
 
-      let oldKeys = [playerA.innerText, playerB.innerText]
-      let key1 = randomCharButNot(...oldKeys)
-      let key2 = randomCharButNot(...oldKeys, key1)
-      playerA.innerText = key1
-      playerB.innerText = key2
+      randomiseCharacters()
     }
   }
 }
+
+document.addEventListener(
+  'keyup',
+  createListener('playerA', Sounds.playA.bind(Sounds))
+)
+document.addEventListener(
+  'keyup',
+  createListener('playerB', Sounds.playB.bind(Sounds))
+)
 
 function randomCharButNot (...theseOnes) {
   let char = String.fromCharCode(97 + Math.floor(Math.random() * 26))
