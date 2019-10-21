@@ -5,8 +5,6 @@ const goalbarB = document.getElementById('gb')
 const startButton = document.getElementById('init')
 
 startButton.addEventListener('click', () => {
-  ;[playerA, playerB].forEach(player => (player.usedChars = []))
-
   startButton.innerHTML = 3
 
   let count = 3
@@ -48,11 +46,11 @@ function listener (goal, elem, noise) {
         return
       }
 
-      ;[playerA, playerB].forEach(player => {
-        let randomChar = randomCharButNot(...player.usedChars)
-        player.usedChars.push(randomChar)
-        player.innerHTML = randomChar
-      })
+      let oldKeys = [playerA.innerText, playerB.innerText]
+      let key1 = randomCharButNot(oldKeys)
+      let key2 = randomCharButNot([...oldKeys, key1])
+      playerA.innerText = key1
+      playerB.innerText = key2
     }
   }
 }
