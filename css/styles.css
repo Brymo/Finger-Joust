@@ -2,6 +2,10 @@ body {
   height: 100vh;
   margin: 0;
   overflow-y: hidden;
+
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
 }
 
 .stylish {
@@ -20,7 +24,7 @@ body {
 
 .goal {
   width: 0;
-  transition: width 0.3s;
+  transition: width 0.5s;
   height: 100%;
   background-color: green;
   border-radius: 0.1em;
